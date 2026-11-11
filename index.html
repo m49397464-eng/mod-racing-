@@ -1,2 +1,38 @@
-# mod-racing-
-3D online multiplayer racing game 
+<!DOCTYPE html>
+<html>
+<head>
+<title>Mod Racing 3D</title>
+<style>
+body{margin:0;overflow:hidden;background:#000;color:#fff;font-family:sans-serif}
+#info{position:absolute;top:10px;left:10px;z-index:10}
+button{padding:12px 20px;font-size:18px;background:#00a8ff;color:#fff;border:none;border-radius:10px;margin:5px}
+</style>
+</head>
+<body>
+<div id="info">
+<h2>MOD RACING 3D - Martin Wa City 💙</h2>
+<p>Score: <span id="score">0</span></p>
+<button onclick="startGame()">START RACE</button><br>
+<button onclick="moveLeft()">◀ LEFT</button>
+<button onclick="moveRight()">RIGHT ▶</button>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+let scene=new THREE.Scene(); scene.background=new THREE.Color(0x87ceeb);
+let camera=new THREE.PerspectiveCamera(75,window.innerWidth/window.innerHeight,0.1,1000);
+let renderer=new THREE.WebGLRenderer(); renderer.setSize(window.innerWidth,window.innerHeight); document.body.appendChild(renderer.domElement);
+let road=new THREE.Mesh(new THREE.BoxGeometry(10,0.1,100), new THREE.MeshBasicMaterial({color:0x333333})); road.position.z=-20; scene.add(road);
+let car=new THREE.Mesh(new THREE.BoxGeometry(1.5,0.8,3), new THREE.MeshBasicMaterial({color:0x00a8ff})); car.position.set(0,0.5,5); scene.add(car);
+let enemies=[]; let score=0; let playing=false; let carX=0;
+function startGame(){playing=true;score=0;}
+function moveLeft(){carX-=1.5; if(carX<-3)carX=-3;}
+function moveRight(){carX+=1.5; if(carX>3)carX=3;}
+document.addEventListener('keydown',e=>{if(e.key=='ArrowLeft')moveLeft(); if(e.key=='ArrowRight')moveRight();});
+function animate(){requestAnimationFrame(animate); car.position.x=carX; camera.position.set(carX,4,10); camera.lookAt(car.position);
+if(playing){score++; document.getElementById('score').innerHTML=score;
+if(Math.random()<0.02){let e=new THREE.Mesh(new THREE.BoxGeometry(1.5,0.8,3), new THREE.MeshBasicMaterial({color:0xff0000})); e.position.set((Math.random()*6-3),0.5,-50); scene.add(e); enemies.push(e);}
+enemies.forEach((e,i)=>{e.position.z+=0.8; if(e.position.z>10){scene.remove(e); enemies.splice(i,1);} if(Math.abs(e.position.x-carX)<1.2 && Math.abs(e.position.z-5)<2){playing=false; alert('GAME OVER! Score: '+score);}});}
+renderer.render(scene,camera);} animate();
+</script>
+</body>
+  </html>
